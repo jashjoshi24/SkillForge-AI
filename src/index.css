@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+:root {
+  --color-bg-primary: #10243E;      /* Blueprint Ink */
+  --color-bg-surface: #16324F;      /* Blueprint Line */
+  --color-text-primary: #EDEDE3;    /* Chalk */
+  --color-text-muted: #A9B4C0;      /* Dimmed Chalk */
+  --color-accent-brass: #C89B3C;     /* Brass Signal */
+  --color-accent-sage: #6B9080;      /* Contour Sage */
+  --color-accent-rust: #B5563C;      /* Rust Flag */
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+body {
+  background-color: #10243E;
+  color: #EDEDE3;
+  font-family: 'IBM Plex Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Blueprint Grid Background Pattern */
+.bg-blueprint-grid {
+  background-color: #10243E;
+  background-image: 
+    linear-gradient(rgba(22, 50, 79, 0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 50, 79, 0.6) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.bg-blueprint-grid-dense {
+  background-color: #10243E;
+  background-image: 
+    linear-gradient(rgba(200, 155, 60, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 155, 60, 0.15) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.bg-blueprint-card {
+  background-color: #16324F;
+  border: 1px solid rgba(237, 237, 227, 0.12);
+  border-radius: 6px;
+}
+
+.border-blueprint {
+  border-color: rgba(237, 237, 227, 0.15);
+}
+
+/* Custom Scrollbar for Blueprint Aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #10243E;
+}
+::-webkit-scrollbar-thumb {
+  background: #16324F;
+  border: 1px solid #C89B3C;
+  border-radius: 3px;
+}
+
+/* Scanner Animation */
+@keyframes scanline {
+  0% { top: 0%; }
+  100% { top: 100%; }
+}
+.animate-scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #C89B3C, transparent);
+  box-shadow: 0 0 10px #C89B3C;
+  animation: scanline 2.2s ease-in-out infinite alternate;
+}

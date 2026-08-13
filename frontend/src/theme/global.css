@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Blueprint palette — CSS variable mirror of tailwind.config.js, for the
+   rare spot (e.g. inline SVG contour lines) that needs a raw var instead
+   of a utility class. Section 9 of the project docs. */
+:root {
+  --color-bg-primary: #10243e;
+  --color-bg-surface: #16324f;
+  --color-text-primary: #edede3;
+  --color-text-muted: #a9b4c0;
+  --color-accent-brass: #c89b3c;
+  --color-accent-sage: #6b9080;
+  --color-accent-rust: #b5563c;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
+  --radius-card: 6px;
+  --space-unit: 8px;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* Visible keyboard focus states everywhere — accessibility requirement
+   from the docs (Section 13). Never rely on the browser default alone. */
+:focus-visible {
+  outline: 2px solid var(--color-accent-brass);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
