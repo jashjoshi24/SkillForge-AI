@@ -1,0 +1,14 @@
+# Vercel only needs to build the root Vite frontend (npm install && npm run
+# build -> dist/). Everything below is backend/Python/tooling that has
+# nothing to do with that build — excluding it keeps the upload small and
+# keeps the Vercel build logs free of unrelated noise.
+backend/
+venv/
+.venv/
+__pycache__/
+*.py
+requirements.txt
+*.db
+DEPLOYMENT.md
+MEMBER_3_CHECKLIST.md
+README.md

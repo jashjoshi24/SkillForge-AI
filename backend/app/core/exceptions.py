@@ -66,6 +66,20 @@ class InvalidTargetRoleError(SkillForgeError):
     code = "INVALID_TARGET_ROLE"
 
 
+class AuthError(SkillForgeError):
+    """Missing, invalid, or expired authentication credentials."""
+
+    status_code = 401
+    code = "AUTH_ERROR"
+
+
+class ConflictError(SkillForgeError):
+    """The request conflicts with existing state (e.g. duplicate email)."""
+
+    status_code = 409
+    code = "CONFLICT"
+
+
 def register_exception_handlers(app) -> None:
     """`app` is a `fastapi.FastAPI` instance. Imported lazily (see module docstring)."""
     from fastapi import Request

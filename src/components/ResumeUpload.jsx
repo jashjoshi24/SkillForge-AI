@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { extractResume } from '../services/api';
 import { LoadingScanner } from './LoadingScanner';
 import { ExtractionReview } from './ExtractionReview';
 import { Upload, FileText, CheckCircle2, FileUp, Sparkles, ShieldCheck, ArrowRight } from 'lucide-react';
 
 export const ResumeUpload = () => {
-  const { demoMode, targetRole, setActiveTab } = useApp();
+  const { demoMode, targetRole, setActiveTab, runExtraction, confirmAndAnalyze, isSyncing, apiError } = useApp();
   const [isScanning, setIsScanning] = useState(false);
   const [isReviewed, setIsReviewed] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [extractError, setExtractError] = useState(null);
+
+  // The LoadingScanner's step animation runs on its own fixed ~4s timer,
+  // independent of the real extraction call. A real LLM-backed extraction
+  // can take longer than that, so the review screen must wait for BOTH
+  // the animation to finish AND the extraction promise to resolve —
+  // otherwise ExtractionReview could render before the real profile data
+  // has actually landed in context.
+  const [animationDone, setAnimationDone] = useState(false);
+  const [extractionDone, setExtractionDone] = useState(false);
+
+  useEffect(() => {
+    if (animationDone && extractionDone) {
+      setIsScanning(false);
+      setIsReviewed(true);
+    }
+  }, [animationDone, extractionDone]);
 
   const handleFileDrop = (e) => {
     e.preventDefault();
@@ -28,20 +44,47 @@ export const ResumeUpload = () => {
 
   const processFile = async (file) => {
     setSelectedFile(file);
+    setExtractError(null);
+    setAnimationDone(false);
+    setExtractionDone(false);
     setIsScanning(true);
+    try {
+      // runExtraction() always resolves — services/api.js falls back to
+      // demo data internally on any real-network failure — but guard
+      // anyway so the scanner never gets stuck mid-parse.
+      await runExtraction(file);
+    } catch (err) {
+      setExtractError(err.message || 'Resume parsing failed. Please try again.');
+    } finally {
+      setExtractionDone(true);
+    }
   };
 
-  const handleSampleResume = () => {
-    setSelectedFile({ name: 'Charmi_Sonagra_Resume_2026.pdf', size: 142000 });
+  const handleSampleResume = async () => {
+    const sampleFile = { name: 'Charmi_Sonagra_Resume_2026.pdf', size: 142000 };
+    setSelectedFile(sampleFile);
+    setExtractError(null);
+    setAnimationDone(false);
+    setExtractionDone(false);
     setIsScanning(true);
+    try {
+      // There's no real sample file on disk to upload, so this always
+      // uses demo data — even when API MODE is on — via forceDemo.
+      await runExtraction(sampleFile, { forceDemo: true });
+    } finally {
+      setExtractionDone(true);
+    }
   };
 
   const handleScannerComplete = () => {
-    setIsScanning(false);
-    setIsReviewed(true);
+    setAnimationDone(true);
   };
 
-  const handleConfirmProfile = () => {
+  const handleConfirmProfile = async () => {
+    // No-op in demo mode; in API mode this persists the (possibly edited)
+    // profile and runs real gap-analysis + roadmap generation before
+    // moving on, so the Roadmap/Dashboard tabs have live data waiting.
+    await confirmAndAnalyze();
     setActiveTab('roadmap');
   };
 
@@ -57,7 +100,7 @@ export const ResumeUpload = () => {
   }
 
   if (isReviewed) {
-    return <ExtractionReview onConfirm={handleConfirmProfile} />;
+    return <ExtractionReview onConfirm={handleConfirmProfile} isSyncing={isSyncing} syncError={apiError} />;
   }
 
   return (
@@ -133,6 +176,12 @@ export const ResumeUpload = () => {
           MODE: {demoMode ? 'STANDALONE DEMO' : 'LIVE FASTAPI'}
         </div>
       </div>
+
+      {extractError && (
+        <div className="p-3 rounded bg-[#B5563C]/15 border border-[#B5563C]/50 text-[#B5563C] text-[11px]">
+          {extractError}
+        </div>
+      )}
 
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { CheckCircle2, Trash2, Plus, Edit2, ShieldAlert, Sparkles, User, Briefcase, Code, GraduationCap, Copy, Check, MessageSquare } from 'lucide-react';
 
-export const ExtractionReview = ({ onConfirm }) => {
+export const ExtractionReview = ({ onConfirm, isSyncing = false, syncError = null }) => {
   const { 
     extractedProfile, 
     updateExtractedSkill, 
@@ -60,12 +60,19 @@ export const ExtractionReview = ({ onConfirm }) => {
 
         <button
           onClick={onConfirm}
-          className="px-6 py-2.5 rounded bg-[#C89B3C] hover:bg-[#b08732] text-[#10243E] font-display font-bold text-xs tracking-wider flex items-center gap-2 shadow shrink-0"
+          disabled={isSyncing}
+          className="px-6 py-2.5 rounded bg-[#C89B3C] hover:bg-[#b08732] disabled:opacity-60 disabled:cursor-wait text-[#10243E] font-display font-bold text-xs tracking-wider flex items-center gap-2 shadow shrink-0"
         >
           <CheckCircle2 className="w-4 h-4" />
-          CONFIRM & SURVEY SKILL GAPS
+          {isSyncing ? 'SYNCING WITH LIVE API...' : 'CONFIRM & SURVEY SKILL GAPS'}
         </button>
       </div>
+
+      {syncError && (
+        <div className="p-3 rounded bg-[#B5563C]/15 border border-[#B5563C]/50 text-[#B5563C] text-[11px]">
+          {syncError} — showing the most recent data available.
+        </div>
+      )}
 
       {/* AI ELEVATOR PITCH GENERATOR BOX (FEATURE ADDITION) */}
       <div className="p-4 bg-[#10243E] rounded border border-[#6B9080]/50 space-y-3">
@@ -231,10 +238,11 @@ export const ExtractionReview = ({ onConfirm }) => {
       <div className="pt-4 text-center">
         <button
           onClick={onConfirm}
-          className="px-8 py-3 rounded bg-[#C89B3C] hover:bg-[#b08732] text-[#10243E] font-display font-bold text-sm tracking-wider inline-flex items-center gap-2 shadow-lg transition-all"
+          disabled={isSyncing}
+          className="px-8 py-3 rounded bg-[#C89B3C] hover:bg-[#b08732] disabled:opacity-60 disabled:cursor-wait text-[#10243E] font-display font-bold text-sm tracking-wider inline-flex items-center gap-2 shadow-lg transition-all"
         >
           <CheckCircle2 className="w-4 h-4" />
-          CONFIRM PROFILE & MAP SKILL GAPS
+          {isSyncing ? 'SYNCING WITH LIVE API...' : 'CONFIRM PROFILE & MAP SKILL GAPS'}
         </button>
       </div>
 

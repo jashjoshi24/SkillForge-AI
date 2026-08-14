@@ -24,8 +24,14 @@ class Settings(BaseSettings):
     AI_API_KEY: str = ""
     AI_MODEL: str = "gemini-3.6-flash"
 
-    # Auth (dev stub until Member 2's real Module A lands)
+    # Auth — real JWT auth (Module A) now lives in app/core/security.py and
+    # app/routers/auth.py. AUTH_DEV_MODE stays on as a fallback (no
+    # Authorization header -> resolves/creates a stub user) so existing
+    # tests and any teammate without a token yet keep working; flip it off
+    # once the frontend is fully wired to /auth/login.
     JWT_SECRET: str = "change-me-in-production"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     AUTH_DEV_MODE: bool = True
     DEV_USER_EMAIL: str = "dev@skillforge.local"
 

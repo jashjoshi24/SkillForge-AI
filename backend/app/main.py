@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import get_settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging_config import configure_logging
-from app.routers import gap_analysis, resume, roadmap
+from app.routers import auth, gap_analysis, resume, roadmap
 
 configure_logging()
 logger = logging.getLogger("skillforge.main")
@@ -42,6 +42,7 @@ app.add_middleware(
 
 register_exception_handlers(app)
 
+app.include_router(auth.router)
 app.include_router(resume.router)
 app.include_router(gap_analysis.router)
 app.include_router(roadmap.router)

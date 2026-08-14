@@ -1,0 +1,70 @@
+# ===========================================================================
+# SkillForge AI — root .gitignore (covers the whole repo: root frontend,
+# backend/, and anything else nested under this tree — patterns with no
+# leading slash match at any depth, so this file does not need to be
+# duplicated inside backend/).
+# ===========================================================================
+
+# --- Secrets / environment files -------------------------------------------
+# Real .env files are never committed. .env.example / *.env.example files
+# are templates with no secrets and ARE meant to be committed — the
+# negation lines make sure a broader pattern above never accidentally
+# swallows them.
+.env
+*.env
+.env.*
+!.env.example
+!*/.env.example
+.env.backup
+*.env.backup
+
+# --- Python (backend/) ------------------------------------------------------
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+pip-wheel-metadata/
+*.py[cod]
+
+
+# --- Node / frontend ---------------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+build/
+.vite/
+.parcel-cache/
+*.local
+
+# --- Databases (local SQLite files should never be committed) ---------------
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Deployment platforms -----------------------------------------------------
+.vercel/
+.render-buildpacks/
+
+# --- Logs ----------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- IDE / OS ------------------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

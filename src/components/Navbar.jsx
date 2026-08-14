@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { MapPin, Compass, Cpu, BookOpen, BarChart3, Upload, Menu, X, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { AuthModal } from './AuthModal';
+import { MapPin, Compass, Cpu, BookOpen, BarChart3, Upload, Menu, X, ShieldAlert, CheckCircle2, User, LogIn, LogOut } from 'lucide-react';
 
 export const Navbar = () => {
-  const { 
-    demoMode, 
-    setDemoMode, 
-    targetRole, 
-    setTargetRole, 
-    TARGET_ROLES, 
-    activeTab, 
+  const {
+    demoMode,
+    setDemoMode,
+    targetRole,
+    setTargetRole,
+    TARGET_ROLES,
+    activeTab,
     setActiveTab,
-    matchPercentage
+    matchPercentage,
+    authUser,
+    logout
   } = useApp();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const navItems = [
     { id: 'landing', label: 'SURVEY TERRAIN', icon: Compass },
@@ -25,6 +29,7 @@ export const Navbar = () => {
   ];
 
   return (
+    <>
     <header className="sticky top-0 z-50 bg-[#10243E]/95 backdrop-blur border-b border-[#EDEDE3]/15">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
@@ -106,6 +111,34 @@ export const Navbar = () => {
             <span className={`w-2 h-2 rounded-full ${demoMode ? 'bg-[#C89B3C] animate-ping' : 'bg-gray-500'}`} />
             <span>{demoMode ? 'DEMO MODE: ON' : 'API MODE'}</span>
           </button>
+
+          {/* Real Account: Log In / Account + Log Out */}
+          {authUser ? (
+            <div className="flex items-center gap-1.5">
+              <div
+                className="px-2.5 py-1 rounded bg-[#16324F] border border-[#EDEDE3]/15 text-xs font-mono text-[#EDEDE3] flex items-center gap-1.5 max-w-[140px]"
+                title={authUser.email}
+              >
+                <User className="w-3.5 h-3.5 text-[#C89B3C] shrink-0" />
+                <span className="truncate">{authUser.name || authUser.email}</span>
+              </div>
+              <button
+                onClick={logout}
+                className="p-1.5 rounded bg-[#16324F] border border-[#EDEDE3]/15 text-[#A9B4C0] hover:text-[#B5563C] hover:border-[#B5563C]/50"
+                title="Log out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="px-2.5 py-1 rounded bg-[#16324F] border border-[#EDEDE3]/20 text-xs font-mono text-[#EDEDE3] hover:border-[#C89B3C]/50 flex items-center gap-1.5"
+            >
+              <LogIn className="w-3.5 h-3.5 text-[#C89B3C]" />
+              <span>LOG IN</span>
+            </button>
+          )}
         </div>
 
         {/* Mobile Hamburger Button */}
@@ -116,6 +149,23 @@ export const Navbar = () => {
           >
             {demoMode ? 'DEMO' : 'API'}
           </button>
+          {authUser ? (
+            <button
+              onClick={logout}
+              className="p-2 text-[#A9B4C0] hover:text-[#B5563C] hover:bg-[#16324F] rounded border border-[#EDEDE3]/15"
+              title="Log out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowAuthModal(true)}
+              className="p-2 text-[#EDEDE3] hover:bg-[#16324F] rounded border border-[#EDEDE3]/15"
+              title="Log in"
+            >
+              <LogIn className="w-4 h-4" />
+            </button>
+          )}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 text-[#EDEDE3] hover:bg-[#16324F] rounded border border-[#EDEDE3]/15"
@@ -166,5 +216,16 @@ export const Navbar = () => {
         </div>
       )}
     </header>
+
+    {/* Rendered OUTSIDE <header> on purpose: <header> has `backdrop-blur`
+        (backdrop-filter), which per the CSS spec creates a new containing
+        block for any `position: fixed` descendant. That silently broke the
+        modal before — its "fixed inset-0" was being measured against the
+        64px-tall header box instead of the actual browser viewport, so all
+        that ever showed was a sliver up top. Keeping AuthModal as a sibling
+        of <header> instead of a child fixes that at the root, rather than
+        just trying to out-style it with more CSS. */}
+    {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
+    </>
   );
 };

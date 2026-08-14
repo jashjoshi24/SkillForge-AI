@@ -1,0 +1,55 @@
+# ===========================================================================
+# Render Blueprint — deploys the FastAPI backend (backend/) as a native
+# Python web service. In the Render dashboard: New + -> Blueprint -> point
+# it at this repo -> Apply. Env vars marked `sync: false` are NOT stored in
+# this file (so no secret ever gets committed) — Render prompts for them
+# once, the first time you apply this blueprint.
+# ===========================================================================
+services:
+  - type: web
+    name: skillforge-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    # alembic upgrade head runs on every boot — it's a safe no-op when the
+    # database is already up to date, and guarantees a fresh Neon branch or
+    # a new migration is applied before uvicorn starts accepting traffic.
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      # Neon connection string (Connection Details -> pooled connection).
+      # postgresql+psycopg2://<user>:<password>@<host>/<db>?sslmode=require
+      - key: DATABASE_URL
+        sync: false
+      # Random, Render-generated — never reuse the local-dev default.
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_EXPIRE_MINUTES
+        value: "10080"
+      # OFF in production: no anonymous dev-user fallback once real login exists.
+      - key: AUTH_DEV_MODE
+        value: "false"
+      - key: DEV_USER_EMAIL
+        value: dev@skillforge.local
+      - key: AI_PROVIDER
+        value: gemini
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        value: gemini-3.6-flash
+      # Your Vercel production URL(s), comma-separated, no trailing slash.
+      # e.g. https://skillforge-ai.vercel.app
+      # Update this AFTER the frontend is deployed (see DEPLOYMENT.md).
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: MAX_RESUME_FILE_SIZE_MB
+        value: "8"
+      - key: LOG_LEVEL
+        value: INFO

@@ -1,4 +1,4 @@
-import React from 'react';
+git switch mainimport React from 'react';
 import { useApp } from '../context/AppContext';
 import { Compass, ShieldCheck, Printer, X, Sparkles, Award, MapPin } from 'lucide-react';
 
