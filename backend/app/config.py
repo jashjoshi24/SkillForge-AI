@@ -38,6 +38,13 @@ class Settings(BaseSettings):
     # App
     ENVIRONMENT: str = "development"
     FRONTEND_ORIGIN: str = "http://localhost:5173"
+    # Vercel gives every single deployment its own unique URL (a new one on
+    # every push) on top of the stable branch alias and production domain —
+    # so pinning FRONTEND_ORIGIN to one exact URL breaks again on the next
+    # deploy. This regex additionally allows any preview URL under
+    # *.vercel.app so CORS doesn't need a manual update every time. Leave
+    # it blank to disable and rely on FRONTEND_ORIGIN only.
+    FRONTEND_ORIGIN_REGEX: str = r"https://.*\.vercel\.app"
     MAX_RESUME_FILE_SIZE_MB: int = 8
     LOG_LEVEL: str = "INFO"
 

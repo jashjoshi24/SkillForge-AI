@@ -35,6 +35,10 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
+    # See FRONTEND_ORIGIN_REGEX in app/config.py — covers Vercel's
+    # per-deployment preview URLs, which change on every push and would
+    # otherwise need FRONTEND_ORIGIN updated by hand each time.
+    allow_origin_regex=settings.FRONTEND_ORIGIN_REGEX or None,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

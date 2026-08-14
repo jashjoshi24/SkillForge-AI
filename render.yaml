@@ -49,6 +49,13 @@ services:
       # Update this AFTER the frontend is deployed (see DEPLOYMENT.md).
       - key: FRONTEND_ORIGIN
         sync: false
+      # Backstop for the above: Vercel gives every deployment (and every
+      # preview) its own unique URL, so FRONTEND_ORIGIN alone breaks again
+      # on the next push. This regex allows any *.vercel.app origin so you
+      # don't have to keep updating FRONTEND_ORIGIN by hand. Narrow it later
+      # if you want to lock this down past the hackathon.
+      - key: FRONTEND_ORIGIN_REGEX
+        value: "https://.*\\.vercel\\.app"
       - key: MAX_RESUME_FILE_SIZE_MB
         value: "8"
       - key: LOG_LEVEL
